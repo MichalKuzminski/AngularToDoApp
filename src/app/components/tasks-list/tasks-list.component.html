@@ -2,7 +2,7 @@
   <div *ngFor="let task of tasks" class="bg-gray-100 p-4 mb-4 rounded-lg">
     <ul>
       <li
-        [class.line-through]="task.completed"
+        [class.line-through]="task.done"
         class="flex items-center justify-between text-gray-800"
       >
         {{ task.name }}

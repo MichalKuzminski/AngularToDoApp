@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Task } from '../../constants/tasks.interface';
+import { TaskService } from '../../services/task.service';
+
 
 @Component({
   selector: 'app-tasks-list',
@@ -7,19 +9,43 @@ import { Task } from '../../constants/tasks.interface';
 })
 export class TasksListComponent implements OnInit {
   @Input() tasks: Task[];
-  constructor() { }
+  constructor(private taskService: TaskService) { }
 
   ngOnInit(): void {
+    this.loadTasks();
+  }
+
+  loadTasks(): void {
+    this.taskService.getTasks().subscribe(
+      (tasks) => {
+        this.tasks = tasks;
+      },
+      (error) => {
+        console.error('Error loading tasks:', error);
+      }
+    );
   }
 
   removeTask(task: Task) {
-    const taskIndex = this.tasks.indexOf(task);
-    if (taskIndex !== -1) {
-      this.tasks.splice(taskIndex, 1);
-    }
+    console.log('task: ', task)
+    this.taskService.deleteTask(task.id).subscribe(
+      response => {
+        this.loadTasks()
+      },
+      error => {
+        console.error('Error creating task', error);
+      }
+    );
   }
 
   toggleCompleted(task: Task) {
-    task.completed = !task.completed;
+    this.taskService.updateTask(task.id, !task.done).subscribe(
+      response => {
+        this.loadTasks()
+      },
+      error => {
+        console.error('Error creating task', error);
+      }
+    );
   }
 }
